@@ -65,7 +65,7 @@ public class BigInteger implements Cloneable {
     }
 
     public String toString() {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(this.isNegative() ? '-' : '+');
         for (int i = this.msd; i < MAX_DIGITS; ++i) {
             // separate every 3 characters with comma
