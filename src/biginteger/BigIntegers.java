@@ -11,7 +11,49 @@ public class BigIntegers {
         thisIssmaller,
     }
 
+    private String checkStringNumber(String str) {
+
+        if (str == "") {
+            return "0";
+        }
+
+        int lb = 0;
+        int ub = str.length();
+        String x = "";
+        boolean haveSign = false;
+
+        if (str.startsWith("+") || str.startsWith("-")) {
+            lb = 1;
+            x += str.charAt(0);
+            haveSign = true;
+        }
+        boolean firstNoneZerroNumber = false;
+        for (int idx = lb; idx < ub; idx++) {
+            char num = str.charAt(idx);
+
+            if (num == '0' && !firstNoneZerroNumber) {
+                continue;
+            } else {
+                firstNoneZerroNumber = true;
+            }
+
+            if (num >= '0' && num <= '9') {
+                x += num;
+            }
+        }
+        if (x.length() == 0) {
+            x = "0";
+        } else if (x.length() == 1 && haveSign) {
+            x = "0";
+        }
+
+        return x;
+    }
+
     public BigIntegers(String number) {
+
+        number = checkStringNumber(number);
+
         Boolean haveSign = false;
 
         if (number.startsWith("-")) {
@@ -28,11 +70,7 @@ public class BigIntegers {
         this.number_array = new byte[ub - lb];
         for (int i = lb; i < ub; i++) {
             char num = number.charAt(i);
-            if (num >= '0' && num <= '9') {
-                this.number_array[i - lb] = Byte.parseByte(Character.toString(num));
-            } else {
-                throw new IllegalArgumentException("Format is not correct.");
-            }
+            this.number_array[i - lb] = Byte.parseByte(Character.toString(num));
         }
     }
 
@@ -42,6 +80,11 @@ public class BigIntegers {
         int l = this.number_array.length;
         for (int i = 0; i < l; i++) {
             x += this.number_array[i];
+        }
+
+        if (x.compareTo("-0") == 0 
+                || x.compareTo("+0")==0) {
+            x = "0";
         }
         return x;
     }
@@ -194,7 +237,7 @@ public class BigIntegers {
             sub = s + sub;
         }
         if (c == -1) {
-            System.err.println("c: "+c);
+            System.err.println("c: " + c);
         }
         return new BigIntegers(sub);
     }
