@@ -99,10 +99,9 @@ public class BigInteger implements Cloneable {
         if (n_this && !n_that) return -1;
         if (!n_this && n_that) return +1;
 
-        // fix the negative values
-        return (cmp_d == -1)
-            ? (!n_this && !n_that ? -1 : +1)
-            : (     cmp_d == 1    ? +1 :  0);
+        return cmp_d
+            // negate the cmp_d since (A < B) <=> (-A > -B)
+            * (n_this && n_that ? -1 : +1);
     }
 
     public BigInteger add(BigInteger that)
