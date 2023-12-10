@@ -136,7 +136,7 @@ public class BigInteger implements Cloneable {
             // store the carry in the result digit
             if (a.digits[i] >= 10) {
                 a.digits[i] -= 10;
-                a.digits[i-1]++; // carry
+                ++a.digits[i-1]; // carry
             }
         }
 
@@ -190,12 +190,12 @@ public class BigInteger implements Cloneable {
 
         for (int i = MAX_DIGITS-1; i >= 0; --i) {
             // -9 <= result.
-            c.digits[i] = (byte)(a.digits[i] - b.digits[i]);
+            c.digits[i] += (byte)(a.digits[i] - b.digits[i]);
             c.msd = (c.digits[i] == 0) ? c.msd : i;
             // store the carry in the result digit
             if (c.digits[i] < 0) {
                 c.digits[i] += 10;
-                c.digits[i-1]--;
+                --c.digits[i-1];
             }
         }
 
