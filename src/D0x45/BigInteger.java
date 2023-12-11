@@ -195,4 +195,61 @@ public class BigInteger implements Cloneable {
 
         return c;
     }
+
+    public BigInteger mul(BigInteger that) {
+        final boolean n_this = this.isNegative(), n_that = that.isNegative();
+        int i = 0, j = 0;
+        BigInteger m_temp,
+            product = new BigInteger(),
+            // shorter number will be multiplier
+            multiplier = this.msd > that.msd ? this : that,
+            // longer number will be multiplicand
+            multiplicand  = this.msd > that.msd ? that : this;
+
+        // zero multiplied by anything gives zero
+        if (multiplicand.isZero() || multiplier.isZero())
+            return product;
+
+        // there are many algorithms for multiplication
+        // some are pretty efficient and fast
+        // but here we stick to the good old textbook standard
+        //
+        // multiply 23,958,233 (multiplicand)
+        // by 5,830 (multiplier)
+        // arrives at 139,676,498,390 (product).
+        //
+        // 23958233
+        // ×         5830
+        // ———————————————
+        //       00000000 ( =  23,958,233 ×     0)
+        //      71874699  ( =  23,958,233 ×    30)
+        //    191665864   ( =  23,958,233 ×   800)
+        // + 119791165    ( =  23,958,233 × 5,000)
+        // ———————————————
+        //   139676498390 ( = 139,676,498,390)
+
+        // 5<-8<-3<-0
+        for (i = MAX_DIGITS-1; i >= 0; --i) {
+            final int right_zero_shift = MAX_DIGITS - i - 1;
+            final byte m_digit = multiplier.digits[i];
+            if (m_digit == 0) continue;
+            // 2<-3<-9<-5<-8<-2<-3<-3
+            m_temp = new BigInteger(); // zero
+            for (j = MAX_DIGITS-right_zero_shift-1; j >= 0; --j) {
+                m_temp.digits[j] += (byte) (multiplier.digits[i] * multiplicand.digits[j+right_zero_shift]);
+                m_temp.msd = (m_temp.digits[j] == 0) ? m_temp.msd : j;
+                // carry
+                if (m_temp.digits[j] > 10) {
+                    m_temp.digits[j-1] += (m_temp.digits[j] / 10);
+                    m_temp.digits[j] %= 10;
+                }
+            }
+            product = product.add(m_temp);
+        }
+
+        product.negative = (!n_this && !n_that)
+            ? false
+            : !(n_this && n_that);
+        return product;
+    }
 }

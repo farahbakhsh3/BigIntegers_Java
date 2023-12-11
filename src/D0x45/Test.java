@@ -48,6 +48,15 @@ public class Test {
         sub("-10", "-5", "-5");
         sub("100", "110", "-10");
         sub("100", "80", "+20");
+
+        // multiplication
+        mul("0", "0", "+0");
+        mul("34", "12", "+408");
+        mul("+11", "-55", "-605");
+        mul("+1", "-1", "-1");
+        mul("-1", "-1", "+1");
+        mul("-9999", "-9", "+89,991");
+        mul("23958233", "5830", "+139,676,498,390");
     }
 
     public static void cmp(BigInteger a, BigInteger b, int expected) {
@@ -83,7 +92,19 @@ public class Test {
             throw new Error(String.format("expected '%s' for subtraction, got: %s", expected, subtraction));
     }
 
+    public static void mul(BigInteger a, BigInteger b, String expected) {
+        final String multiplication = a.mul(b).toString();
+        System.out.format(
+                "%s * %s = %s\n",
+                a.toString(),
+                b.toString(),
+                multiplication);
+        if (!expected.equalsIgnoreCase(multiplication))
+            throw new Error(String.format("expected '%s' for multiplication, got: %s", expected, multiplication));
+    }
+
     public static void cmp(String a, String b, int e) { cmp(BigInteger.from(a), BigInteger.from(b), e); }
     public static void add(String a, String b, String e) { add(BigInteger.from(a), BigInteger.from(b), e); }
     public static void sub(String a, String b, String e) { sub(BigInteger.from(a), BigInteger.from(b), e); }
+    public static void mul(String a, String b, String e) { mul(BigInteger.from(a), BigInteger.from(b), e); }
 }
