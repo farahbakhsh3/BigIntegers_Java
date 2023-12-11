@@ -247,9 +247,7 @@ public class BigInteger implements Cloneable {
             product = product.add(m_temp);
         }
 
-        product.negative = (!n_this && !n_that)
-            ? false
-            : !(n_this && n_that);
+        product.negative = !(!n_this && !n_that) && !(n_this && n_that);
         return product;
     }
 }
