@@ -50,6 +50,12 @@ public class BigInteger implements Cloneable {
     public static BigInteger from(Long num) { return from(num.toString()); }
     public static BigInteger from(Short num) { return from(num.toString()); }
     public static BigInteger from(Byte num) { return from(num.toString()); }
+    public static BigInteger one(boolean positive) {
+        BigInteger b = new BigInteger();
+        b.digits[b.msd] = 1;
+        b.negative = !positive;
+        return b;
+    }
 
     public boolean equals(BigInteger that) { return this.cmp(that) == 0; }
     public boolean isZero() { return this.digits[this.msd] == 0; }
@@ -77,7 +83,8 @@ public class BigInteger implements Cloneable {
     }
 
     /** 0 if equal, -1 if less and +1 if greater */
-    public int cmp(BigInteger that) {
+    public int cmp(BigInteger that) { return this.cmp(that, false); }
+    public int cmp(BigInteger that, boolean ignore_sign) {
         final boolean n_this = this.isNegative(), n_that = that.isNegative();
         int cmp_d = 0, i = this.msd < that.msd ? this.msd : that.msd;
 
@@ -95,11 +102,11 @@ public class BigInteger implements Cloneable {
                 : 0;
 
         // -A <=> B, A <=> -B
-        if (n_this && !n_that) return -1;
-        if (!n_this && n_that) return +1;
+        if (!ignore_sign && n_this && !n_that) return -1;
+        if (!ignore_sign && !n_this && n_that) return +1;
 
         // negate the cmp_d since (A < B) <=> (-A > -B)
-        return cmp_d * (n_this && n_that ? -1 : +1);
+        return cmp_d * (ignore_sign ? 1 : (n_this && n_that ? -1 : +1));
     }
 
     public BigInteger add(BigInteger that) {
@@ -249,5 +256,47 @@ public class BigInteger implements Cloneable {
 
         product.negative = !(!n_this && !n_that) && !(n_this && n_that);
         return product;
+    }
+
+    public BigInteger div(BigInteger that) {
+        final boolean n_this = this.isNegative(), n_that = that.isNegative();
+        final int cmp = this.cmp(that, true);
+        final BigInteger one = BigInteger.one(true);
+        BigInteger quotient, remainder, denominator;
+
+        if (that.isZero())
+            throw new Error("division by zero is not allowed");
+        
+        if (cmp == -1)
+            throw new Error("dividend can not be less than divisor");
+        
+        // equal
+        if (cmp == 0) {
+            quotient = BigInteger.from("1");
+        } else {
+            // Division by repeated subtraction
+            // N = this, D = that --> (N/D)
+            // R := N
+            // Q := 0
+            // while R ≥ D do
+            //  R := R − D
+            //  Q := Q + 1
+            // end
+            // return (Q,R)
+            remainder = this.clone();
+            denominator = that.clone();
+            denominator.negative = false;
+            remainder.negative = false;
+            quotient = new BigInteger();
+
+            while (true) {
+                remainder = remainder.sub(denominator);
+                if (remainder.cmp(that) != 1) break;
+                quotient = quotient.add(one);
+            }
+        }
+
+        quotient.negative = !(!n_this && !n_that) && !(n_this && n_that);
+        return quotient;
     }
 }

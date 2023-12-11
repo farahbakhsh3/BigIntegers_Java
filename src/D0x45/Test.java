@@ -57,6 +57,17 @@ public class Test {
         mul("-1", "-1", "+1");
         mul("-9999", "-9", "+89,991");
         mul("23958233", "5830", "+139,676,498,390");
+
+        // division
+        // passing null for 'expected' param means the function throws Error
+        div("0", "0", null);
+        div("115", "0", null);
+        div("10", "10", "+1");
+        div("-10", "10", "-1");
+        div("10", "-10", "-1");
+        div("-10", "-10", "+1");
+        div("30", "-2", "-15");
+        div("-1000", "-2", "+500");
     }
 
     public static void cmp(BigInteger a, BigInteger b, int expected) {
@@ -103,8 +114,25 @@ public class Test {
             throw new Error(String.format("expected '%s' for multiplication, got: %s", expected, multiplication));
     }
 
+    public static void div(BigInteger a, BigInteger b, String expected) {
+        try {
+            final String division = a.div(b).toString();
+            System.out.format(
+                    "%s / %s = %s\n",
+                    a.toString(),
+                    b.toString(),
+                    division);
+            if (!expected.equalsIgnoreCase(division))
+                throw new Error(String.format("expected '%s' for division, got: %s", expected, division));
+        } catch (Error e) {
+            if (expected != null)
+                throw new Error(String.format("expected '%s' for division, got error: %s", expected, e.getMessage()));
+        }
+    }
+
     public static void cmp(String a, String b, int e) { cmp(BigInteger.from(a), BigInteger.from(b), e); }
     public static void add(String a, String b, String e) { add(BigInteger.from(a), BigInteger.from(b), e); }
     public static void sub(String a, String b, String e) { sub(BigInteger.from(a), BigInteger.from(b), e); }
     public static void mul(String a, String b, String e) { mul(BigInteger.from(a), BigInteger.from(b), e); }
+    public static void div(String a, String b, String e) { div(BigInteger.from(a), BigInteger.from(b), e); }
 }
