@@ -5,7 +5,7 @@ import os
 path = os.path.dirname(__file__)+"/Test.java"
 
 def test(n1:int, n2:int):
-    with subprocess.Popen(["java",f"{path}",f"{n1}",f"{n2}"],stdout=subprocess.PIPE, stdin=subprocess.PIPE) as p:
+    with subprocess.Popen(["java",f"{path}",f"{n1}",f"{n2}"],stdout=subprocess.PIPE) as p:
         stdout, _ = p.communicate()
         result = stdout.decode().strip().split("\r\n")
         
