@@ -1,0 +1,35 @@
+import java.math.BigInteger;
+
+public class LargeNumberOperations {
+    public static void main(String[] args) {
+        // Two 100-digit numbers represented as strings
+        String num1 = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        String num2 = "9876543210987654321098765432109876543210987654321098765432109876543210987654321098765432109876543210";
+
+        // Convert the strings to BigIntegers
+        BigInteger bigNum1 = new BigInteger(num1);
+        BigInteger bigNum2 = new BigInteger(num2);
+
+        // Addition
+        BigInteger sum = bigNum1.add(bigNum2);
+        System.out.println("Sum: " + sum);
+
+        // Subtraction
+        BigInteger difference = bigNum1.subtract(bigNum2);
+        System.out.println("Difference: " + difference);
+
+        // Multiplication
+        BigInteger product = bigNum1.multiply(bigNum2);
+        System.out.println("Product: " + product);
+
+        // Division
+        // Ensure non-zero divisor for division
+        BigInteger divisor = new BigInteger("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567891");
+        if (divisor.equals(BigInteger.ZERO)) {
+            System.out.println("Cannot divide by zero.");
+        } else {
+            BigInteger quotient = bigNum1.divide(divisor);
+            System.out.println("Quotient: " + quotient);
+        }
+    }
+}
